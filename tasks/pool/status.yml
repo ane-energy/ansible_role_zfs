@@ -1,0 +1,4 @@
+---
+- name: "ZFS pool status for pool \"{{ zpool.name }}\""
+  ansible.builtin.debug:
+    var: ansible_zfs_pools | d('ZFS pool {{ zpool.name }} does not exist')

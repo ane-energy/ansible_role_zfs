@@ -1,0 +1,77 @@
+# roles/zfs/meta/argument_spec.yml
+---
+argument_specs:
+  # roles/zfs/tasks/main.yml entry point
+  main:
+    short_description: Install, configure and manage ZFS
+    description:
+      - This is the main entrypoint for the zfs role.
+    author:
+      - Sören Plönnigs
+    options:
+      zfs:
+        type: "dict"
+        required: false
+        description:
+          - "Dictionary containing the zfs options."
+        #elements: "dict"
+        options:
+          pools:
+            type: "dict"
+            required: false
+            description: "Dictionary containing the zfs pools."
+            #elements: "dict"
+          datasets:
+            type: "dict"
+            required: false
+            description: "Dictionary containing the zfs datasets."
+            #elements: "dict"
+  pool:
+    short_description: Handle ZFS pools
+    description:
+      - "This entrypoint handles each ZFS pool."
+    author:
+      - Sören Plönnigs
+    options:
+      name:
+        type: "string"
+        required: true
+        description: >
+          The name of the pool to operate on.
+          Mandatory when creating pools.
+      operation:
+        type: "string"
+        required: true
+        description: >
+          The operation to be performed on the pool.
+        default: "create"
+        choices:
+          - create
+          - destroy
+          - scrub
+          - status
+      mode:
+        type: "string"
+        required: false
+        description: >
+          The mode of the pool.
+          Defaults to single for single disks and mirror for multiple disks.
+        default: "single"
+        choices:
+          - single
+          - mirror
+          - raidz
+          - raidz2
+          - raidz3
+      disks:
+        type: "list"
+        required: true
+        description: >
+          List of strings containing the disks to be used in the pool.
+        elements: "string"
+  dataset:
+    short_description: Handle ZFS datasets
+    description:
+      - "This entrypoint handles each ZFS dataset."
+    author:
+      - Sören Plönnigs

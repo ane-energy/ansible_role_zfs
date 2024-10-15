@@ -9,17 +9,20 @@
 - name: "Install required packages"
   vars:
     packages_present: "{{ packages_present_zfs_RedHat if ansible_os_family == 'RedHat' else packages_present_zfs_Debian }}"
-    call_from: "role zfs"
+    call_from: "zfs role"
+    repos: []
   ansible.builtin.include_role:
     name: "{{ __fqcn_packages__ }}"
   tags: install
 
-- name: "Handle ZFS Pools"
+- name: "Handle ZFS pools"
   ansible.builtin.include_tasks: pool.yml
+  vars:
+    zpool: "{{ pool[1] | combine({'name': pool[0]}) }}"
   loop: "{{ (zfs.pools | d({})).items() }}"
   loop_control:
-    loop_var: zpool
-    label: "{{ zpool[0] }}"
+    loop_var: pool
+    label: "{{ pool[0] }}"
   tags: pool
 
 - name: "Handle ZFS datasets"

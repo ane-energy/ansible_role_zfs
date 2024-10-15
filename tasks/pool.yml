@@ -1,15 +1,13 @@
 ---
 - tags: pool
   block:
-    - name: "Gather pool facts for pool \"{{ zpool[0] }}\""
+    - name: "Gather pool facts for pool \"{{ zpool.name }}\""
       become: true
       community.general.zpool_facts:
-        name: "{{ zpool[0] }}"
+        name: "{{ zpool.name }}"
       register: gather_zpool_facts_out
       # task will fail if zpool does not exist, this is the expected behaviour and no error.
       ignore_errors: true
 
-    - name: "Create zpool \"{{ zpool[0] }}\""
-      when: gather_zpool_facts_out.failed
-      become: true
-      ansible.builtin.shell: "zpool create {{ zpool[0] }} {{ zpool[1].mode | d('') }} {{ zpool[1].disks | join(' ') }}"
+- name: "Import tasks depending on pool operation"
+  ansible.builtin.include_tasks: "pool/{{ zpool.operation }}.yml"

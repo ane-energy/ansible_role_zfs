@@ -1,0 +1,15 @@
+---
+- name: "Fail if pool \"{{ zpool.name }}\" does already exist"
+  when: not gather_zpool_facts_out.failed
+  ansible.builtin.fail:
+    msg: "Pool \"{{ zpool.name }}\" already exists, not creating"
+
+- name: "Create zpool \"{{ zpool.name }}\""
+  when: gather_zpool_facts_out.failed
+  become: true
+  ansible.builtin.shell: >
+    zpool
+    {{ zpool.operation }}
+    {{ zpool.name }}
+    {{ zpool.mode | d('') }}
+    {{ zpool.disks | join(' ') }}
