@@ -1,7 +1,7 @@
 ---
 - tags: pool
   block:
-    - name: "Gather pool facts for pool \"{{ zpool.name }}\""
+    - name: "Gather pool facts for pool {{ zpool.name }}"
       become: true
       community.general.zpool_facts:
         name: "{{ zpool.name }}"
@@ -10,4 +10,13 @@
       ignore_errors: true
 
 - name: "Import tasks depending on pool operation"
-  ansible.builtin.include_tasks: "pool/{{ zpool.operation }}.yml"
+  ansible.builtin.include_tasks: "pool/{{ zpool.operation | d('create') }}.yml"
+
+- name: "Handle ZFS datasets for pool {{ zpool.name }}"
+  ansible.builtin.include_tasks: dataset.yml
+  vars:
+    zdataset: "{{ dataset[1] | combine({'name': zpool.name + '/' + dataset[0]}) }}"
+  loop: "{{ (zpool.datasets | d({})).items() }}"
+  loop_control:
+    loop_var: dataset
+    label: "{{ dataset[0] }}"

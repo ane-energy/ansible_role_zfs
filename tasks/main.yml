@@ -1,11 +1,4 @@
 ---
-#- name: "Configure required repos"
-#  ansible.builtin.import_role:
-#    name: sploenix.base.repo
-#  vars:
-#    repos:
-#      - zfs
-
 - name: "Install required packages"
   vars:
     packages_present: "{{ packages_present_zfs_RedHat if ansible_os_family == 'RedHat' else packages_present_zfs_Debian }}"
@@ -14,6 +7,13 @@
   ansible.builtin.include_role:
     name: "{{ __fqcn_packages__ }}"
   tags: install
+
+- name: "Ensure that the ZFS kernel module is loaded"
+  become: true
+  community.general.modprobe:
+    name: zfs
+    state: present
+  ignore_errors: "{{ ansible_check_mode }}"
 
 - name: "Handle ZFS pools"
   ansible.builtin.include_tasks: pool.yml
@@ -24,10 +24,3 @@
     loop_var: pool
     label: "{{ pool[0] }}"
   tags: pool
-
-- name: "Handle ZFS datasets"
-  ansible.builtin.include_tasks: dataset.yml
-  loop: "{{ (zfs.datasets | d({})).items() }}"
-  loop_control:
-    loop_var: dataset
-    label: "{{ dataset[0] }}"

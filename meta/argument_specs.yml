@@ -29,7 +29,10 @@ argument_specs:
   pool:
     short_description: Handle ZFS pools
     description:
-      - "This entrypoint handles each ZFS pool."
+      - This entrypoint handles each ZFS pool.
+      - If no pools are specified, the pool tasks are skipped.
+      - The entrypoint is a wrapper for the ansible module 'community.general.zpool'. Please refer to its documentation for more information on the supported options.
+      - https://docs.ansible.com/ansible/latest/collections/community/general/zpool_module.html
     author:
       - Sören Plönnigs
     options:
@@ -42,8 +45,7 @@ argument_specs:
       operation:
         type: "string"
         required: true
-        description: >
-          The operation to be performed on the pool.
+        description: The operation to be performed on the pool.
         default: "create"
         choices:
           - create
@@ -66,12 +68,37 @@ argument_specs:
       disks:
         type: "list"
         required: true
-        description: >
-          List of strings containing the disks to be used in the pool.
+        description: List of strings containing the disks to be used in the pool.
         elements: "string"
   dataset:
     short_description: Handle ZFS datasets
     description:
-      - "This entrypoint handles each ZFS dataset."
+      - This entrypoint handles each ZFS dataset.
+      - If no datasets are specified, the dataset tasks are skipped.
+      - The entrypoint is a wrapper for the ansible module 'community.general.zfs'. Please refer to its documentation for more information on the supported options.
+      - https://docs.ansible.com/ansible/latest/collections/community/general/zfs_module.html
     author:
       - Sören Plönnigs
+    options:
+      extra_zfs_properties:
+        type: "dict"
+        required: false
+        description: "Dictionary containing extra zfs dataset properties."
+      name:
+        type: "string"
+        required: true
+        description: >
+          The name of the dataset to operate on.
+          Mandatory when creating datasets.
+      origin:
+        type: "string"
+        required: false
+        description: The origin of the dataset.
+      state:
+        type: "string"
+        required: true
+        description: The state of the dataset.
+        default: "present"
+        choices:
+          - present
+          - absent

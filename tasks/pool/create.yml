@@ -8,8 +8,8 @@
   when: gather_zpool_facts_out.failed
   become: true
   ansible.builtin.shell: >
-    zpool
-    {{ zpool.operation }}
+    zpool create
     {{ zpool.name }}
     {{ zpool.mode | d('') }}
     {{ zpool.disks | join(' ') }}
+  ignore_errors: "{{ ansible_check_mode }}"
