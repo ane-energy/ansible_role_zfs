@@ -31,8 +31,6 @@ argument_specs:
     description:
       - This entrypoint handles each ZFS pool.
       - If no pools are specified, the pool tasks are skipped.
-      - The entrypoint is a wrapper for the ansible module 'community.general.zpool'. Please refer to its documentation for more information on the supported options.
-      - https://docs.ansible.com/ansible/latest/collections/community/general/zpool_module.html
     author:
       - Sören Plönnigs
     options:
@@ -68,7 +66,12 @@ argument_specs:
       disks:
         type: "list"
         required: true
-        description: List of strings containing the disks to be used in the pool.
+        description: List of strings containing the disks (path to the device) to be used in the pool.
+        elements: "string"
+      datasets:
+        type: "list"
+        required: false
+        description: List of strings with the names of the datasets to be created in the pool.
         elements: "string"
   dataset:
     short_description: Handle ZFS datasets
