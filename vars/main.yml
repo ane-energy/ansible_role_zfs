@@ -1,6 +1,8 @@
 ---
 packages_present_zfs_Debian:
+  - efitools
   - linux-headers-amd64
+  - uuid-runtime
   - zfs-dkms
   - zfs-zed
   - zfsutils-linux
